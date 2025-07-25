@@ -1,0 +1,197 @@
+body, html {
+    height: 100%;
+    display: grid;
+    place-items: center;
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
+    background-color: #303145;
+}
+
+.infographic {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 10vh;
+}
+
+.container {
+    width: 90%;
+    max-width: 650px;
+    text-align: center;
+    padding: 20px;
+}
+
+.inputs {
+    flex-direction: column;
+    align-items: center;
+}
+
+
+#numSimulations {
+    font-size: 18px;
+    padding: 5px;
+    height: 25px;
+    width: 100%;
+    max-width: 250px;
+}
+
+
+.btn {
+    border: none;
+    color: white;
+    overflow: hidden;
+    margin-left: 1rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    padding: 0;
+    height: 40px;
+    background-color: #426FC5;
+    border-radius: 5px;
+    width: 100%;
+    max-width: 150px;
+}
+
+
+.reload-btn {
+    border: none;
+    color: white;
+    overflow: hidden;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    padding: 0;
+    height: 40px;
+    font-size: 1.2em;
+    background-color: #426FC5;
+    border-radius: 5px;
+    width: 100%;
+    max-width: 50px;
+}
+
+
+button {
+    margin-top: 10px;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+
+.progress-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px;
+}
+
+.progress-bar {
+    height: 70px;
+    width: 90%;
+    max-width: 500px;
+    background: linear-gradient(145deg, #333, #222);
+    border-radius: 10px;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.20), -4px -4px 8px rgba(255, 255, 255, 0); /* 3D effect shadow */
+    position: relative; /* Enable positioning for inner text */
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    color: #ffffff;
+}
+
+.progress {
+    height: 70px;
+    width: 0;
+    background-color: #4caf50;
+    transition: width 0.1s ease;
+    border-radius: 0px;
+    display: flex;
+    align-items:  center;
+}
+
+
+.progress-text {
+    position: absolute;
+    z-index: 1;
+    color: white;
+    padding-left: 12px;
+    font-size: 15px;
+}
+
+
+#results {
+    width: 100%; /* Keeps it centered within its container */
+    max-width: 600px; /* Optional maximum width */
+    margin: auto;
+    margin-top: 40px;
+    transform: scale(1.2); /* Scale up to 120% */
+    transform-origin: center; /* Keep the scaling centered */
+}
+
+#numSimulations::-webkit-inner-spin-button, 
+#numSimulations::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+#numSimulations {
+    -moz-appearance: textfield; /* Firefox */
+}
+
+#numSimulations:focus {
+    outline: none;
+    box-shadow: none;
+    border: none;
+}
+
+@media (max-width: 768px) { /* For tablets and smaller screen devices, 768px or less */
+    #numSimulations {
+        font-size: 16px;
+    }
+
+    .btn {
+        font-size: 16px;
+        width: 100%;
+    }
+
+    .reload-btn {
+        width: 100%;
+        max-width: 60px;
+    }
+
+    .progress-bar {
+        height: 50px;
+    }
+
+    .progress {
+        height: 50px;
+    }
+
+    #results {
+        transform: scale(1);
+    }
+}
+
+@media (max-width: 480px) { /* For mobile phones and screens 480px or less */
+    .container {
+        padding: 10px;
+    }
+
+    #numSimulations {
+        font-size: 14px;
+    }
+
+    .btn, .reload-btn {
+        font-size: 14px;
+        padding: 0.5rem;
+        height: auto;
+    }
+
+    .progress-bar {
+        height: 40px;
+    }
+
+    .progress {
+        height: 40px;
+    }
+
+    #results {
+        transform: scale(1);
+    }
+}

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Z-Buffer Algorithm Visualization</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="info">
+        <h2>Z-Buffer Algorithm Visualization</h2>
+        <p>Select a shape and click on the canvas to draw it on the canvas.</p>
+    </div>
+    <canvas id="canvas"></canvas>
+    <div id="menu">
+        <div id="depthControl">
+            <span id="depthLabel">Depth</span>
+            <button class="depthButton" onclick="increaseDepth()">+</button>
+            <button class="depthButton" onclick="decreaseDepth()">-</button>
+        </div>
+        <button onclick="drawShape('circle')">Circle</button>
+        <button onclick="drawShape('triangle')">Triangle</button>
+        <button onclick="drawShape('rectangle')">Rectangle</button>
+        <button onclick="drawShape('square')">Square</button>
+        <button onclick="clearCanvasAndZBuffer()">Clear</button>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

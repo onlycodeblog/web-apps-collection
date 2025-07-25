@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Regex Tester</title>
+    <style>
+      :root {
+        --bg-color: #1e1e2d;
+        --window-color: #2c2c3a;
+        --text-color: #e0e0e0;
+        --accent-color: slateblue;
+        --border-color: #3a3a4d;
+      }
+      .toast {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: var(--accent-color);
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        z-index: 1000;
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+        pointer-events: none;
+      }
+
+      .toast.show {
+        opacity: 1;
+      }
+      body {
+        font-family: Arial, sans-serif;
+        background: var(--bg-color);
+        color: var(--text-color);
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        transition: background 0.3s, color 0.3s;
+        flex-direction: column;
+      }
+      .container {
+        width: 90%;
+        max-width: 600px;
+        background: var(--window-color);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), 0 4px 12px rgba(0, 0, 0, 0.3);
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 300px;
+      }
+      h1 {
+        text-align: center;
+        color: #ffffff;
+      }
+      textarea,
+      input {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        background: var(--bg-color);
+        color: var(--text-color);
+        font-size: 0.9rem;
+      }
+      textarea,
+      input:focus {
+        outline: none;
+        box-shadow: none; /* In case the browser adds a shadow on focus */
+      }
+      .highlight {
+        background-color: var(--accent-color);
+        color: #fff;
+        border-radius: 4px;
+        padding: 2px 4px;
+      }
+      .btn-group {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+      }
+      button {
+        flex: 1;
+        padding: 13px 16px;
+        background: var(--accent-color);
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: normal;
+        transition: background 0.3s;
+
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.2);
+        font-size: 0.95rem;
+      }
+      button:hover {
+        background: #5b21b6;
+      }
+
+      .matches-box {
+        width: 90%;
+        max-width: 600px;
+        background: var(--window-color);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        padding: 20px;
+        margin-top: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        height: 280px;
+        max-height: 280px;
+        overflow-y: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Regex Tester</h1>
+      <input type="text" id="regexInput" placeholder="Enter Regex" />
+      <textarea
+        id="textInput"
+        rows="6"
+        placeholder="Enter text to test..."
+      ></textarea>
+      <div class="btn-group">
+        <button onclick="runRegex()">Test</button>
+        <button onclick="copyRegex()">Copy Regex</button>
+        <button onclick="copyMatches()">Copy Matches</button>
+      </div>
+    </div>
+
+    <div class="container matches-box">
+      <h3 style="align-self: flex-start">Matches</h3>
+      <div
+        id="result"
+        style="
+          white-space: pre-wrap;
+          word-wrap: break-word;
+          width: 100%;
+          overflow-y: auto;
+          max-height: 220px;
+        "
+      ></div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+      function escapeHtml(text) {
+        const map = {
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#039;",
+        };
+        return text.replace(/[&<>"']/g, (m) => map[m]);
+      }
+
+      function showToast(message, duration = 2000) {
+        const toast = document.getElementById("toast");
+        toast.textContent = message;
+        toast.classList.add("show");
+
+        setTimeout(() => {
+          toast.classList.remove("show");
+        }, duration);
+      }
+
+      function runRegex() {
+        const regexInput = document.getElementById("regexInput").value;
+        const textInput = document.getElementById("textInput").value;
+        const resultDiv = document.getElementById("result");
+        resultDiv.innerHTML = "";
+
+        // If either input is empty, clear matches and return
+        if (!regexInput.trim()) {
+          resultDiv.innerHTML = "<em>Regex is empty.</em>";
+          return;
+        }
+        if (!textInput.trim()) {
+          resultDiv.innerHTML = "<em>Text is empty.</em>";
+          return;
+        }
+
+        try {
+          const regex = new RegExp(regexInput, "g");
+          const matches = [...textInput.matchAll(regex)];
+
+          if (matches.length === 0) {
+            resultDiv.innerHTML = "<em>No matches found.</em>";
+            return;
+          }
+
+          // Sort matches by index to process them in order
+          matches.sort((a, b) => a.index - b.index);
+
+          // Create a new highlighted HTML string with proper handling of overlapping matches
+          let highlighted = textInput;
+          let output = "";
+          let lastIndex = 0;
+
+          matches.forEach((match) => {
+            if (match.index >= lastIndex) {
+              // Only process if this match starts after the last processed position
+              // Add text between matches
+              output += highlighted.substring(lastIndex, match.index);
+              // Add the highlighted match
+              output += `<span class="highlight">${escapeHtml(
+                match[0]
+              )}</span>`;
+              // Update lastIndex to after this match
+              lastIndex = match.index + match[0].length;
+            }
+          });
+
+          // Add any remaining text after the last match
+          if (lastIndex < highlighted.length) {
+            output += highlighted.substring(lastIndex);
+          }
+
+          resultDiv.innerHTML = output;
+        } catch (e) {
+          resultDiv.innerHTML = `<em>Invalid Regex</em>`;
+        }
+      }
+
+      function copyRegex() {
+        const regex = document.getElementById("regexInput").value;
+        if (regex) {
+          navigator.clipboard
+            .writeText(regex)
+            .then(() => {
+              showToast("Regex copied to clipboard");
+            })
+            .catch((err) => {
+              console.error("Could not copy text: ", err);
+              showToast("Failed to copy to clipboard. Please try again.");
+            });
+        } else {
+          showToast("No regex pattern to copy.");
+        }
+      }
+
+      function copyMatches() {
+        const resultDiv = document.getElementById("result");
+        const resultContent = resultDiv.innerText.trim();
+
+        if (!resultContent) {
+          showToast("No matches found.");
+          return;
+        }
+
+        const highlightedElements = resultDiv.querySelectorAll(".highlight");
+        const matches = Array.from(highlightedElements).map(el => el.innerText);
+
+        if (matches.length === 0) {
+          showToast("No matches found.");
+          return;
+        }
+
+        navigator.clipboard
+          .writeText(matches.join(", "))
+          .then(() => {
+              showToast("Matches copied to clipboard");
+          })
+          .catch(err => {
+              console.error("Could not copy text: ", err);
+              showToast("Failed to copy to clipboard. Please try again.");
+          });
+      }
+      
+    </script>
+  </body>
+</html>

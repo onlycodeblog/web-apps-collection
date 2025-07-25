@@ -1,0 +1,169 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #ffffff;
+    color: #cfcfd4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Container for sidebar and main content */
+.container {
+    width: 770px; 
+    margin: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Sidebar styles */
+.sidebar {
+    background-color: #2f2f3e;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.sidebar h2, .sidebar h3, .sidebar label {
+    color: #9fa4c0;
+    margin: 0;
+    font-weight: normal;
+}
+
+.sidebar input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    background-color: #1e1e2d;
+    border: none;
+    border-radius: 5px;
+    color: #cfcfd4;
+    box-sizing: border-box;
+}
+
+.sidebar button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 15px;
+    background-color: #5a67d8;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.sidebar button:hover {
+    background-color: #4a55c3;
+}
+
+.sequence-display {
+    background-color: #1e1e2d;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 20px;
+    color: #cfcfd4;
+    overflow-y: auto;
+    max-height: 100px;
+}
+
+/* Main content for the graph */
+.main-content {
+    background-color: #2f2f3e;
+    padding: 20px;
+    border-radius: 8px;
+    width: 100%; /* Take full width within container */
+    box-sizing: border-box;
+}
+
+.inner-depth {
+    width: 100%;
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Only target the input with id="startingNumber" */
+#startingNumber::-webkit-inner-spin-button, 
+#startingNumber::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+#startingNumber {
+    -moz-appearance: textfield; /* Firefox */
+}
+
+#startingNumber:focus {
+    outline: none;
+    box-shadow: none;
+    border: none;
+}
+
+canvas {
+    width: 100%;
+    height: 100%;
+}
+
+/* Responsive styles */
+@media (max-width: 770px) {
+    .container {
+        width: 650px;
+        margin: 10px;
+    }
+
+    .sidebar, .main-content {
+  	width: 650px;
+    }
+
+    .inner-depth {
+        height: 250px;
+    }
+
+    .sequence-display {
+        max-height: 80px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        width: 360px;
+        margin: 5px;
+    }
+
+    .sidebar, .main-content {
+        padding: 10px;
+    }
+
+    .inner-depth {
+        height: 200px;
+    }
+
+    .sequence-display {
+        max-height: 60px;
+    }
+}
+
+@media (max-width: 400px) {
+    .container {
+        width: 330px;
+        margin: 5px;
+    }
+
+    .sidebar, .main-content {
+        padding: 20px;
+        width: 330px;
+    }
+
+    .inner-depth {
+        height: 200px;
+    }
+
+    .sequence-display {
+        max-height: 60px;
+    }
+}

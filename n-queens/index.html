@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>N-Queens Visualizer and Solver</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
+      :root {
+        --primary-color: #4f46e5;
+        --primary-light: #6366f1;
+        --primary-dark: #3730a3;
+        --secondary-color: #0ea5e9;
+        --light-color: #f8fafc;
+        --dark-color: #0f172a;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --danger-color: #ef4444;
+        --border-radius: 8px;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        --font-primary: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+          sans-serif;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+        width: 100%;
+        overflow-x: hidden;
+      }
+
+      body {
+        font-family: var(--font-primary);
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        color: var(--dark-color);
+        line-height: 1.5;
+        padding: 10px;
+        font-size: 16px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-lg);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 20px;
+        position: relative;
+      }
+
+      h1 {
+        font-size: 2rem;
+        margin-bottom: 10px;
+        color: var(--dark-color);
+        font-weight: 700;
+        letter-spacing: -0.025em;
+        background: linear-gradient(
+          135deg,
+          var(--dark-color),
+          var(--primary-color)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .description {
+        margin-bottom: 20px;
+        font-size: 1rem;
+        color: #64748b;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+        line-height: 1.5;
+      }
+
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 20px;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        z-index: 10;
+      }
+
+      .control-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background-color: #f1f5f9;
+        padding: 10px 12px;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-sm);
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      label {
+        font-weight: 600;
+        color: var(--dark-color);
+        font-size: 0.9rem;
+      }
+
+      input,
+      select {
+        padding: 8px 12px;
+        border: 2px solid #e2e8f0;
+        border-radius: var(--border-radius);
+        font-size: 14px;
+        font-family: inherit;
+        transition: var(--transition);
+        color: var(--dark-color);
+        font-weight: 500;
+        box-shadow: var(--shadow-sm);
+        min-width: 60px;
+      }
+
+      input:focus,
+      select:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+      }
+
+      button {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 8px 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+        font-size: 0.9rem;
+        letter-spacing: 0.025em;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      button::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+        transition: 0.5s;
+      }
+
+      button:hover::before {
+        left: 100%;
+      }
+
+      button:hover {
+        background-color: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+      }
+
+      button:active {
+        transform: translateY(0);
+        box-shadow: var(--shadow);
+      }
+
+      button.secondary {
+        background-color: #e2e8f0;
+        color: var(--dark-color);
+      }
+
+      button.secondary:hover {
+        background-color: #cbd5e1;
+      }
+
+      button.success {
+        background-color: var(--success-color);
+      }
+
+      button.success:hover {
+        background-color: #059669;
+      }
+
+      button.warning {
+        background-color: var(--warning-color);
+      }
+
+      button.warning:hover {
+        background-color: #d97706;
+      }
+
+      button.danger {
+        background-color: var(--danger-color);
+      }
+
+      button.danger:hover {
+        background-color: #dc2626;
+      }
+
+      button:disabled {
+        background-color: #cbd5e1;
+        color: #64748b;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+        opacity: 0.7;
+      }
+
+      button:disabled::before {
+        display: none;
+      }
+
+      /* Loading dots animation */
+      .loading-dots {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .loading-dots span {
+        animation: loadingDots 1.4s infinite both;
+        opacity: 0;
+      }
+
+      .loading-dots span:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+
+      .loading-dots span:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+
+      @keyframes loadingDots {
+        0% {
+          opacity: 0;
+        }
+        50% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0;
+        }
+      }
+
+      #board-container {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+        margin-bottom: 20px;
+        background-color: #f8fafc;
+        padding: 15px;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-sm);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      #board {
+        border: 2px solid #cbd5e1;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+        margin: 0 auto;
+        transition: var(--transition);
+        overflow: hidden;
+        width: auto;
+        max-width: 100%;
+      }
+
+      .row {
+        display: flex;
+        justify-content: center;
+      }
+
+      .cell {
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      /* Remove spinner buttons from number input */
+      input[type="number"]::-webkit-inner-spin-button,
+      input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+
+      /* Responsive adjustments for smaller screens */
+      @media (max-width: 768px) {
+        .cell {
+          width: 36px;
+          height: 36px;
+        }
+
+        .controls {
+          flex-direction: column;
+        }
+
+        .solution-nav {
+          flex-direction: row !important; /* Override any previous flex-direction changes */
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 8px;
+          padding: 10px 8px;
+        }
+
+        .solution-counter {
+          min-width: auto;
+          flex: 0 0 auto;
+          padding: 6px 8px;
+          font-size: 0.9rem;
+        }
+
+        #solution-speed {
+          width: 60px;
+        }
+
+        .solution-nav button {
+          padding: 6px 10px;
+          font-size: 0.85rem;
+        }
+      }
+
+      /* Even smaller screens */
+      @media (max-width: 480px) {
+        .cell {
+          width: 28px;
+          height: 28px;
+        }
+
+        h1 {
+          font-size: 1.75rem;
+        }
+
+        .description {
+          font-size: 0.9rem;
+        }
+      }
+
+      .cell.dark {
+        background-color: #94a3b8;
+      }
+
+      .cell.light {
+        background-color: #f1f5f9;
+      }
+
+      .cell:hover {
+        opacity: 0.8;
+      }
+
+      .cell.queen::after {
+        content: "♛";
+        font-size: 32px;
+        color: var(--primary-color);
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s ease;
+      }
+
+      @media (max-width: 768px) {
+        .cell.queen::after {
+          font-size: 24px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .cell.queen::after {
+          font-size: 20px;
+        }
+      }
+
+      .cell.queen:hover::after {
+        transform: scale(1.1);
+      }
+
+      .cell.attack-path {
+        position: relative;
+      }
+
+      .cell.attack-path::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(239, 68, 68, 0.2);
+        z-index: 1;
+      }
+
+      .status {
+        margin-top: 20px;
+        padding: 12px;
+        border-radius: var(--border-radius);
+        text-align: center;
+        font-weight: 500;
+        transform: translateY(0);
+        transition: transform 0.3s ease-in-out;
+        box-shadow: var(--shadow);
+      }
+
+      .status.fade-in {
+        transform: translateY(0);
+      }
+
+      .status.success {
+        background-color: rgba(16, 185, 129, 0.1);
+        color: var(--success-color);
+        border: 1px solid var(--success-color);
+      }
+
+      .status.warning {
+        background-color: rgba(245, 158, 11, 0.1);
+        color: var(--warning-color);
+        border: 1px solid var(--warning-color);
+      }
+
+      .status.error {
+        background-color: rgba(239, 68, 68, 0.1);
+        color: var(--danger-color);
+        border: 1px solid var(--danger-color);
+      }
+
+      .solution-nav {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 15px;
+        justify-content: center;
+        padding: 12px;
+        background-color: #f1f5f9;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-sm);
+        flex-wrap: wrap;
+      }
+
+      .solution-counter {
+        padding: 6px 12px;
+        background-color: white;
+        border-radius: var(--border-radius);
+        font-weight: 600;
+        color: var(--dark-color);
+        box-shadow: var(--shadow-sm);
+        min-width: 120px;
+        text-align: center;
+      }
+
+      #solution-speed {
+        width: 70px;
+      }
+
+      /* Icons for buttons */
+      .icon {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        fill: currentColor;
+      }
+
+      /* Animations */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.03);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      @keyframes shimmer {
+        0% {
+          background-position: -200% 0;
+        }
+        100% {
+          background-position: 200% 0;
+        }
+      }
+
+      .fade-in {
+        animation: fadeIn 0.5s ease-in-out;
+      }
+
+      .pulse {
+        animation: pulse 1.5s infinite;
+      }
+
+      /* Loading effect */
+      .loading {
+        background: linear-gradient(
+          90deg,
+          #f1f5f9 25%,
+          #e2e8f0 50%,
+          #f1f5f9 75%
+        );
+        background-size: 200% 100%;
+        animation: shimmer 1.5s infinite;
+      }
+
+      /* Make content readable in iframe environments */
+      .iframe-container {
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="iframe-container">
+      <div class="container">
+        <div class="header">
+          <h1>N-Queens Visualizer</h1>
+          <p class="description">
+            Place N queens on an N×N chessboard so that no two queens threaten
+            each other.
+          </p>
+        </div>
+
+        <div class="controls">
+          <div class="control-group">
+            <label for="board-size">Board Size:</label>
+            <input
+              type="number"
+              id="board-size"
+              min="4"
+              max="16"
+              value="8"
+              pattern="\d+"
+              oninput="this.value = this.value.replace(/[^0-9]/g, '');"
+            />
+            <button id="resize-btn">Resize</button>
+          </div>
+
+          <div class="control-group">
+            <button id="solve-btn" class="success">Solve</button>
+            <button id="clear-btn" class="warning">Clear</button>
+            <button id="random-btn">Random</button>
+          </div>
+        </div>
+
+        <div class="solution-nav" id="solution-nav" style="display: none">
+          <button id="prev-solution" class="secondary">
+            <svg
+              class="icon"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"
+                fill="currentColor"
+              />
+            </svg>
+            Prev
+          </button>
+          <div class="solution-counter" id="solution-counter">
+            Solution 1 of 0
+          </div>
+          <button id="next-solution" class="secondary">
+            Next
+            <svg
+              class="icon"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"
+                fill="currentColor"
+              />
+            </svg>
+          </button>
+          <label for="solution-speed">Speed:</label>
+          <input
+            type="number"
+            id="solution-speed"
+            min="50"
+            max="2000"
+            value="500"
+          />
+          <button id="play-solutions" class="secondary">
+            <svg
+              class="icon"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M8 5v14l11-7z" fill="currentColor" />
+            </svg>
+            Play
+          </button>
+        </div>
+
+        <div id="board-container">
+          <div id="board" class="fade-in"></div>
+        </div>
+
+        <div id="status" class="status fade-in" style="display: none"></div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Elements
+        const boardSizeInput = document.getElementById("board-size");
+        const resizeBtn = document.getElementById("resize-btn");
+        const solveBtn = document.getElementById("solve-btn");
+        const clearBtn = document.getElementById("clear-btn");
+        const randomBtn = document.getElementById("random-btn");
+        const boardContainer = document.getElementById("board-container");
+        const board = document.getElementById("board");
+        const statusEl = document.getElementById("status");
+        const solutionNav = document.getElementById("solution-nav");
+        const solutionCounter = document.getElementById("solution-counter");
+        const prevSolutionBtn = document.getElementById("prev-solution");
+        const nextSolutionBtn = document.getElementById("next-solution");
+        const solutionSpeedInput = document.getElementById("solution-speed");
+        const playSolutionsBtn = document.getElementById("play-solutions");
+
+        // Variables
+        let boardSize = parseInt(boardSizeInput.value) || 8;
+        let queens = Array(boardSize).fill(-1); // queens[row] = column
+        let solutions = [];
+        let currentSolutionIndex = 0;
+        let isPlaying = false;
+        let playInterval;
+        let isMobile = window.innerWidth < 768;
+
+        // Adjust cell size based on screen size
+        function adjustCellSize() {
+          isMobile = window.innerWidth < 768;
+
+          // If we need to dynamically adjust cell size beyond CSS media queries
+          const cells = document.querySelectorAll(".cell");
+          if (cells.length > 0) {
+            updateBoard();
+          }
+        }
+
+        // Listen for resize events
+        window.addEventListener("resize", adjustCellSize);
+
+        // Initialize the board
+        initializeBoard();
+
+        // Event listeners
+        resizeBtn.addEventListener("click", resizeBoard);
+        solveBtn.addEventListener("click", solve);
+        clearBtn.addEventListener("click", clearBoard);
+        randomBtn.addEventListener("click", placeRandomQueen);
+        prevSolutionBtn.addEventListener("click", showPreviousSolution);
+        nextSolutionBtn.addEventListener("click", showNextSolution);
+        playSolutionsBtn.addEventListener("click", togglePlaySolutions);
+
+        // Touch event support for mobile
+        function addTouchSupport(element, callback) {
+          element.addEventListener(
+            "touchstart",
+            function (e) {
+              e.preventDefault(); // Prevent default touch behavior
+              callback();
+            },
+            { passive: false }
+          );
+        }
+
+        // Initialize the board
+        function initializeBoard() {
+          board.innerHTML = "";
+          queens = Array(boardSize).fill(-1);
+
+          for (let i = 0; i < boardSize; i++) {
+            const row = document.createElement("div");
+            row.className = "row";
+
+            for (let j = 0; j < boardSize; j++) {
+              const cell = document.createElement("div");
+              cell.className = `cell ${
+                (i + j) % 2 === 0 ? "light" : "dark"
+              } fade-in`;
+              cell.dataset.row = i;
+              cell.dataset.col = j;
+              cell.style.animationDelay = `${(i * boardSize + j) * 10}ms`;
+
+              // Add both click and touch events
+              cell.addEventListener("click", () => toggleQueen(i, j));
+              addTouchSupport(cell, () => toggleQueen(i, j));
+
+              row.appendChild(cell);
+            }
+
+            board.appendChild(row);
+          }
+
+          updateBoard();
+          hideStatus();
+          hideSolutionNav();
+        }
+
+        // Resize the board
+        function resizeBoard() {
+          const newSize = parseInt(boardSizeInput.value);
+          if (newSize < 4 || newSize > 16) {
+            showStatus("Board size must be between 4 and 16", "error");
+            return;
+          }
+
+          boardSize = newSize;
+          initializeBoard();
+        }
+
+        // Toggle queen placement
+        function toggleQueen(row, col) {
+          if (queens[row] === col) {
+            // Remove queen
+            queens[row] = -1;
+          } else {
+            // Remove any existing queen in the same row
+            queens[row] = -1;
+            // Place new queen
+            queens[row] = col;
+          }
+
+          updateBoard();
+          validateBoard();
+        }
+
+        // Place a random queen on the board
+        function placeRandomQueen() {
+          // Find all rows without queens
+          const emptyRows = [];
+          for (let i = 0; i < boardSize; i++) {
+            if (queens[i] === -1) {
+              emptyRows.push(i);
+            }
+          }
+
+          if (emptyRows.length === 0) {
+            showStatus("All rows already have queens", "warning");
+            return;
+          }
+
+          // Select a random empty row
+          const randomRow =
+            emptyRows[Math.floor(Math.random() * emptyRows.length)];
+
+          // Find all valid columns for this row
+          const validCols = [];
+          for (let col = 0; col < boardSize; col++) {
+            if (isValidPlacement(randomRow, col)) {
+              validCols.push(col);
+            }
+          }
+
+          if (validCols.length === 0) {
+            showStatus("No valid placement for a new queen", "warning");
+            return;
+          }
+
+          // Place queen in a random valid column
+          const randomCol =
+            validCols[Math.floor(Math.random() * validCols.length)];
+          queens[randomRow] = randomCol;
+
+          updateBoard();
+          validateBoard();
+        }
+
+        // Check if a queen placement is valid
+        function isValidPlacement(row, col) {
+          // Check if the column already has a queen
+          for (let i = 0; i < boardSize; i++) {
+            if (queens[i] === col) {
+              return false;
+            }
+          }
+
+          // Check diagonals
+          for (let i = 0; i < boardSize; i++) {
+            if (queens[i] !== -1) {
+              // Check if it's in the same diagonal
+              if (Math.abs(row - i) === Math.abs(col - queens[i])) {
+                return false;
+              }
+            }
+          }
+
+          return true;
+        }
+
+        // Update the board display
+        function updateBoard() {
+          // Clear all queens
+          document.querySelectorAll(".cell").forEach((cell) => {
+            cell.classList.remove("queen");
+            cell.classList.remove("attack-path");
+          });
+
+          // Place queens
+          for (let row = 0; row < boardSize; row++) {
+            const col = queens[row];
+            if (col !== -1) {
+              const cell = document.querySelector(
+                `.cell[data-row="${row}"][data-col="${col}"]`
+              );
+              if (cell) {
+                cell.classList.add("queen");
+              }
+            }
+          }
+
+          // Show attack paths
+          showAttackPaths();
+        }
+
+        // Show the attack paths for all queens
+        function showAttackPaths() {
+          // Create a temporary board to mark attack paths
+          const attackBoard = Array(boardSize)
+            .fill()
+            .map(() => Array(boardSize).fill(false));
+
+          // Mark all queen positions and their attack paths
+          for (let row = 0; row < boardSize; row++) {
+            const col = queens[row];
+            if (col !== -1) {
+              // Mark the column
+              for (let r = 0; r < boardSize; r++) {
+                if (r !== row) {
+                  attackBoard[r][col] = true;
+                }
+              }
+
+              // Mark diagonals
+              for (let i = 1; row + i < boardSize && col + i < boardSize; i++) {
+                attackBoard[row + i][col + i] = true;
+              }
+              for (let i = 1; row + i < boardSize && col - i >= 0; i++) {
+                attackBoard[row + i][col - i] = true;
+              }
+              for (let i = 1; row - i >= 0 && col + i < boardSize; i++) {
+                attackBoard[row - i][col + i] = true;
+              }
+              for (let i = 1; row - i >= 0 && col - i >= 0; i++) {
+                attackBoard[row - i][col - i] = true;
+              }
+            }
+          }
+
+          // Update the UI to show attack paths
+          for (let row = 0; row < boardSize; row++) {
+            for (let col = 0; col < boardSize; col++) {
+              if (attackBoard[row][col]) {
+                const cell = document.querySelector(
+                  `.cell[data-row="${row}"][data-col="${col}"]`
+                );
+                if (cell && !cell.classList.contains("queen")) {
+                  cell.classList.add("attack-path");
+                }
+              }
+            }
+          }
+        }
+
+        // Validate the current board configuration
+        function validateBoard() {
+          // Count queens
+          const queenCount = queens.filter((q) => q !== -1).length;
+
+          // Check if all queens are valid
+          for (let row = 0; row < boardSize; row++) {
+            const col = queens[row];
+            if (col !== -1) {
+              // Temporarily remove this queen to check if it's valid
+              queens[row] = -1;
+              const isValid = isValidPlacement(row, col);
+              queens[row] = col;
+
+              if (!isValid) {
+                // Queen is under attack
+                showStatus(
+                  `Invalid: Queen at row ${row + 1}, col ${
+                    col + 1
+                  } is under attack!`,
+                  "error"
+                );
+                return false;
+              }
+            }
+          }
+
+          if (queenCount === boardSize) {
+            showStatus(`Solution found with ${queenCount} queens!`, "success");
+            return true;
+          } else if (queenCount > 0) {
+            showStatus(
+              `${queenCount} queens placed. Need ${
+                boardSize - queenCount
+              } more.`,
+              "warning"
+            );
+          } else {
+            hideStatus();
+          }
+
+          return false;
+        }
+
+        // Show status message
+        function showStatus(message, type = "info") {
+          statusEl.textContent = message;
+          statusEl.className = `status ${type} fade-in`;
+          statusEl.style.display = "block";
+
+          // Add icon based on type
+          const iconHTML = {
+            success:
+              '<svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="margin-right: 8px;"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" fill="currentColor"/></svg>',
+            warning:
+              '<svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="margin-right: 8px;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v7h-2zm0 8h2v2h-2z" fill="currentColor"/></svg>',
+            error:
+              '<svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="margin-right: 8px;"><path d="M11 15h2v2h-2zm0-8h2v6h-2zm.99-5C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" fill="currentColor"/></svg>',
+          };
+
+          if (iconHTML[type]) {
+            statusEl.innerHTML = iconHTML[type] + message;
+          }
+        }
+
+        // Hide status message
+        function hideStatus() {
+          statusEl.style.display = "none";
+        }
+
+        // Show solution navigation
+        function showSolutionNav() {
+          solutionNav.style.display = "flex";
+          solutionCounter.textContent = `Solution 1 of ${solutions.length}`;
+        }
+
+        // Hide solution navigation
+        function hideSolutionNav() {
+          solutionNav.style.display = "none";
+          isPlaying = false;
+          if (playInterval) {
+            clearInterval(playInterval);
+            playSolutionsBtn.innerHTML =
+              '<svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z" fill="currentColor" /></svg> Play';
+          }
+        }
+
+        // Clear the board
+        function clearBoard() {
+          queens = Array(boardSize).fill(-1);
+          updateBoard();
+          hideStatus();
+          hideSolutionNav();
+          solutions = [];
+        }
+
+        // Solve the N-Queens problem
+        function solve() {
+          clearBoard();
+          solveBtn.disabled = true;
+          solveBtn.innerHTML =
+            '<div class="loading-dots"><span>.</span><span>.</span><span>.</span></div> Solving';
+          solveBtn.classList.add("loading");
+          showStatus("Solving the N-Queens problem...", "warning");
+
+          // Use requestAnimationFrame for better browser performance
+          requestAnimationFrame(() => {
+            setTimeout(() => {
+              solutions = [];
+
+              // Find all solutions
+              const tempQueens = Array(boardSize).fill(-1);
+
+              // Start solving with a web worker if available for better performance
+              // on larger boards
+              if (window.Worker && boardSize > 8) {
+                solveLargeNQueensWithWorker(tempQueens);
+              } else {
+                solveNQueens(tempQueens, 0);
+                finishSolving();
+              }
+            }, 50);
+          });
+        }
+
+        // Solve N-Queens for large boards using Web Worker
+        function solveLargeNQueensWithWorker() {
+          const workerCode = `
+            self.onmessage = function(e) {
+              const boardSize = e.data.boardSize;
+              const solutions = [];
+              
+              function solveNQueens(queens, row) {
+                if (row === boardSize) {
+                  solutions.push([...queens]);
+                  
+                  // For very large boards, send partial results back
+                  if (solutions.length % 10 === 0) {
+                    self.postMessage({type: 'progress', count: solutions.length});
+                  }
+                  return;
+                }
+                
+                for (let col = 0; col < boardSize; col++) {
+                  let isValid = true;
+                  
+                  for (let prevRow = 0; prevRow < row; prevRow++) {
+                    if (queens[prevRow] === col || 
+                        Math.abs(prevRow - row) === Math.abs(queens[prevRow] - col)) {
+                      isValid = false;
+                      break;
+                    }
+                  }
+                  
+                  if (isValid) {
+                    queens[row] = col;
+                    solveNQueens(queens, row + 1);
+                  }
+                }
+              }
+              
+              solveNQueens(Array(boardSize).fill(-1), 0);
+              self.postMessage({type: 'complete', solutions: solutions});
+            };
+          `;
+
+          const blob = new Blob([workerCode], {
+            type: "application/javascript",
+          });
+          const worker = new Worker(URL.createObjectURL(blob));
+
+          worker.onmessage = function (e) {
+            if (e.data.type === "progress") {
+              showStatus(
+                `Found ${e.data.count} solutions so far...`,
+                "warning"
+              );
+            } else if (e.data.type === "complete") {
+              solutions = e.data.solutions;
+              finishSolving();
+              worker.terminate();
+            }
+          };
+
+          worker.onerror = function (error) {
+            console.error("Worker error:", error);
+            solveNQueens(Array(boardSize).fill(-1), 0);
+            finishSolving();
+            worker.terminate();
+          };
+
+          worker.postMessage({ boardSize: boardSize });
+        }
+
+        // Function to handle finishing the solving process
+        function finishSolving() {
+          if (solutions.length > 0) {
+            showStatus(
+              `Found ${solutions.length} solutions for ${boardSize}×${boardSize} board!`,
+              "success"
+            );
+            currentSolutionIndex = 0;
+            showSolution(currentSolutionIndex);
+            showSolutionNav();
+          } else {
+            showStatus(
+              "No solutions found for the current board size!",
+              "error"
+            );
+          }
+
+          solveBtn.disabled = false;
+          solveBtn.innerHTML =
+            '<svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" fill="currentColor"/></svg> Solve';
+          solveBtn.classList.remove("loading");
+        }
+
+        // Recursive function to solve N-Queens
+        function solveNQueens(tempQueens, row) {
+          // Check for maximum number of solutions to prevent performance issues
+          if (solutions.length >= 1000) {
+            return;
+          }
+
+          if (row === boardSize) {
+            // Found a solution
+            solutions.push([...tempQueens]);
+            return;
+          }
+
+          for (let col = 0; col < boardSize; col++) {
+            // Check if this is a valid placement
+            let isValid = true;
+
+            for (let prevRow = 0; prevRow < row; prevRow++) {
+              // Check if same column or diagonal
+              if (
+                tempQueens[prevRow] === col ||
+                Math.abs(prevRow - row) === Math.abs(tempQueens[prevRow] - col)
+              ) {
+                isValid = false;
+                break;
+              }
+            }
+
+            if (isValid) {
+              tempQueens[row] = col;
+              solveNQueens(tempQueens, row + 1);
+            }
+          }
+        }
+
+        // Show a specific solution
+        function showSolution(index) {
+          if (
+            solutions.length === 0 ||
+            index < 0 ||
+            index >= solutions.length
+          ) {
+            return;
+          }
+
+          queens = [...solutions[index]];
+          updateBoard();
+          solutionCounter.textContent = `Solution ${index + 1} of ${
+            solutions.length
+          }`;
+          currentSolutionIndex = index;
+        }
+
+        // Show previous solution
+        function showPreviousSolution() {
+          if (currentSolutionIndex > 0) {
+            showSolution(currentSolutionIndex - 1);
+          } else {
+            showSolution(solutions.length - 1); // Wrap around to the last solution
+          }
+        }
+
+        // Show next solution
+        function showNextSolution() {
+          if (currentSolutionIndex < solutions.length - 1) {
+            showSolution(currentSolutionIndex + 1);
+          } else {
+            showSolution(0); // Wrap around to the first solution
+          }
+        }
+
+        // Toggle playing through solutions
+        function togglePlaySolutions() {
+          if (isPlaying) {
+            clearInterval(playInterval);
+            isPlaying = false;
+            playSolutionsBtn.innerHTML =
+              '<svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z" fill="currentColor" /></svg> Play';
+          } else {
+            const speed = parseInt(solutionSpeedInput.value) || 500;
+            isPlaying = true;
+            playSolutionsBtn.innerHTML =
+              '<svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" fill="currentColor"/></svg> Pause';
+
+            // Start by showing the next solution
+            showNextSolution();
+
+            // Set up interval to cycle through solutions
+            playInterval = setInterval(() => {
+              showNextSolution();
+            }, speed);
+          }
+        }
+
+        // Handle iframe message communication if needed
+        window.addEventListener("message", function (event) {
+          // Example of handling messages from parent frame
+          if (event.data && event.data.action) {
+            switch (event.data.action) {
+              case "resize":
+                if (
+                  event.data.size &&
+                  event.data.size >= 4 &&
+                  event.data.size <= 16
+                ) {
+                  boardSizeInput.value = event.data.size;
+                  resizeBoard();
+                }
+                break;
+              case "solve":
+                solve();
+                break;
+              case "clear":
+                clearBoard();
+                break;
+              case "randomQueen":
+                placeRandomQueen();
+                break;
+            }
+          }
+        });
+
+        // Function to notify parent window when solution is found
+        function notifyParent(message) {
+          if (window.parent && window.parent !== window) {
+            window.parent.postMessage(message, "*");
+          }
+        }
+
+        // Initialize for touch devices
+        function initTouch() {
+          // Add touch support to buttons
+          [
+            resizeBtn,
+            solveBtn,
+            clearBtn,
+            randomBtn,
+            prevSolutionBtn,
+            nextSolutionBtn,
+            playSolutionsBtn,
+          ].forEach((btn) => {
+            addTouchSupport(btn, () => btn.click());
+          });
+        }
+
+        // Call touch initialization
+        initTouch();
+
+        // Send ready message to parent window
+        notifyParent({ status: "ready", app: "nqueens-visualizer" });
+      });
+    </script>
+  </body>
+</html>

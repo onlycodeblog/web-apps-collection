@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selection Sort Visualization</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Selection Sort Visualization</h1>
+            <div class="controls">
+
+                <div class="dropdown">
+                    <button class="dropdown-btn">
+                        Random
+
+                        <span class="dropdown-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </span>
+
+                    </button>
+                    <div class="dropdown-content">
+                        <div class="dropdown-option" onclick="setArrayType('random')">Random</div>
+                        <div class="dropdown-option" onclick="setArrayType('increasing')">Sorted (Increasing)</div>
+                        <div class="dropdown-option" onclick="setArrayType('decreasing')">Sorted (Decreasing)</div>
+                    </div>
+                </div>
+
+                <button onclick="generateArray()">Generate New Array</button>
+                <button id="sort-button" onclick="toggleSort()">Sort</button>
+                <button onclick="resetSimulation()">Reset</button>
+            </div>
+        <div id="array-container" class="array-container"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

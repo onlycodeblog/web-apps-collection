@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Percolation Visualizer</title>
+    <style>
+      :root {
+        --grid-size: 10;
+        --cell-size: 30px;
+        --primary-color: #4a6fa5;
+        --accent-color: #4caf50;
+        --bg-color: #f8f9fa;
+        --text-color: #2d3748;
+        --blocked-color: #0f162e;
+        --open-color: #e2e8f0;
+        --percolating-color: #4caf50;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        background: var(--bg-color);
+        color: var(--text-color);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 20px 10px;
+        margin: 0;
+        min-height: 100vh;
+        box-sizing: border-box;
+      }
+
+      .container {
+        max-width: 600px;
+        width: 100%;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      h1 {
+        margin-bottom: 10px;
+        color: var(--primary-color);
+        font-weight: 600;
+        font-size: 28px;
+        text-align: center;
+      }
+
+      p.description {
+        margin-top: 0;
+        margin-bottom: 20px;
+        text-align: center;
+        max-width: 500px;
+        color: #606770;
+        font-size: 14px;
+      }
+
+      #grid {
+        display: grid;
+        grid-template-columns: repeat(var(--grid-size), 1fr);
+        width: min(90vmin, 500px);
+        height: min(90vmin, 500px);
+        gap: 2px;
+        background-color: #cbd5e0;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .cell {
+        background-color: var(--blocked-color);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border-radius: 2px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .cell:hover {
+        opacity: 0.8;
+        transform: scale(0.95);
+      }
+
+      .open {
+        background-color: var(--open-color);
+      }
+
+      .percolating {
+        background-color: var(--percolating-color) !important;
+        box-shadow: 0 0 5px var(--percolating-color);
+      }
+
+      .controls {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      button {
+        padding: 10px 20px;
+        border: none;
+        background-color: var(--primary-color);
+        color: white;
+        font-size: 14px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      button:active {
+        transform: translateY(0);
+      }
+
+      #randomizeBtn {
+        background-color: var(--accent-color);
+      }
+
+      #sizeSlider {
+        margin-top: 20px;
+        width: 200px;
+      }
+
+      .slider-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 15px;
+        width: 100%;
+      }
+
+      .slider-label {
+        margin-bottom: 5px;
+        font-size: 14px;
+        color: #606770;
+      }
+
+      input[type="range"] {
+        -webkit-appearance: none;
+        width: 200px;
+        height: 8px;
+        border-radius: 5px;
+        background: #cbd5e0;
+        outline: none;
+      }
+
+      input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: var(--primary-color);
+        cursor: pointer;
+      }
+
+      input[type="range"]::-moz-range-thumb {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: var(--primary-color);
+        cursor: pointer;
+      }
+
+      .status {
+        margin-top: 15px;
+        padding: 8px 16px;
+        background-color: #f0f0f0;
+        border-radius: 4px;
+        font-size: 14px;
+        text-align: center;
+        transition: all 0.3s;
+      }
+
+      .percolating-status {
+        background-color: var(--percolating-color);
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Percolation Visualizer</h1>
+      <p class="description">
+        Click cells to toggle between open (white) and blocked (black). Green
+        cells show percolation paths.
+      </p>
+
+      <div id="grid"></div>
+
+      <div class="status" id="status">No percolation detected</div>
+
+      <div class="slider-container">
+        <span class="slider-label"
+          >Grid Size: <span id="sizeValue">10</span>×<span id="sizeValue2"
+            >10</span
+          ></span
+        >
+        <input type="range" id="sizeSlider" min="5" max="20" value="10" />
+      </div>
+
+      <div class="controls">
+        <button id="resetBtn">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+            <path d="M3 3v5h5"></path>
+          </svg>
+          Reset Grid
+        </button>
+        <button id="randomizeBtn">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M8 3v3a2 2 0 0 1-2 2H3"></path>
+            <path d="M21 8h-3a2 2 0 0 1-2-2V3"></path>
+            <path d="M3 16h3a2 2 0 0 1 2 2v3"></path>
+            <path d="M16 21v-3a2 2 0 0 1 2-2h3"></path>
+          </svg>
+          Randomize
+        </button>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        let rows = 10;
+        let cols = 10;
+        const gridElement = document.getElementById("grid");
+        const statusElement = document.getElementById("status");
+        const sizeSlider = document.getElementById("sizeSlider");
+        const sizeValue = document.getElementById("sizeValue");
+        const sizeValue2 = document.getElementById("sizeValue2");
+
+        const createGrid = () => {
+          document.documentElement.style.setProperty("--grid-size", rows);
+
+          gridElement.innerHTML = "";
+          for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+              const cell = document.createElement("div");
+              cell.classList.add("cell");
+              cell.dataset.row = r;
+              cell.dataset.col = c;
+              cell.addEventListener("click", toggleCell);
+              gridElement.appendChild(cell);
+            }
+          }
+
+          updateStatus(false);
+        };
+
+        const toggleCell = (e) => {
+          const cell = e.target;
+          if (cell.classList.contains("open")) {
+            cell.classList.remove("open", "percolating");
+          } else {
+            cell.classList.add("open");
+          }
+          highlightPercolation();
+        };
+
+        const highlightPercolation = () => {
+          // Clear previous percolation highlights
+          document
+            .querySelectorAll(".cell")
+            .forEach((cell) => cell.classList.remove("percolating"));
+
+          // We need to find cells that are part of a path from top to bottom
+          // Step 1: Find all open cells reachable from the top row
+          const reachableFromTop = Array.from({ length: rows }, () =>
+            Array(cols).fill(false)
+          );
+          const topQueue = [];
+
+          // Start from all open cells in the top row
+          for (let c = 0; c < cols; c++) {
+            const startCell = document.querySelector(
+              `.cell[data-row="0"][data-col="${c}"]`
+            );
+            if (startCell && startCell.classList.contains("open")) {
+              topQueue.push([0, c]);
+              reachableFromTop[0][c] = true;
+            }
+          }
+
+          // BFS from top
+          while (topQueue.length > 0) {
+            const [r, c] = topQueue.shift();
+            const directions = [
+              [1, 0],
+              [-1, 0],
+              [0, 1],
+              [0, -1],
+            ];
+
+            for (const [dr, dc] of directions) {
+              const nr = r + dr;
+              const nc = c + dc;
+
+              if (
+                nr >= 0 &&
+                nr < rows &&
+                nc >= 0 &&
+                nc < cols &&
+                !reachableFromTop[nr][nc]
+              ) {
+                const neighbor = document.querySelector(
+                  `.cell[data-row="${nr}"][data-col="${nc}"]`
+                );
+                if (neighbor && neighbor.classList.contains("open")) {
+                  reachableFromTop[nr][nc] = true;
+                  topQueue.push([nr, nc]);
+                }
+              }
+            }
+          }
+
+          // Check if any bottom row cell is reachable from top
+          const percolates = reachableFromTop[rows - 1].some((v) => v);
+
+          if (percolates) {
+            // Step 2: Find all open cells that can reach the bottom row
+            const reachableFromBottom = Array.from({ length: rows }, () =>
+              Array(cols).fill(false)
+            );
+
+            // Start from bottom row cells
+            for (let c = 0; c < cols; c++) {
+              const bottomCell = document.querySelector(
+                `.cell[data-row="${rows - 1}"][data-col="${c}"]`
+              );
+              if (bottomCell && bottomCell.classList.contains("open")) {
+                reachableFromBottom[rows - 1][c] = true;
+              }
+            }
+
+            // Work backwards (from bottom to top)
+            let changed = true;
+            while (changed) {
+              changed = false;
+              for (let r = rows - 1; r >= 0; r--) {
+                for (let c = 0; c < cols; c++) {
+                  // If this cell is already marked as reaching bottom, continue
+                  if (reachableFromBottom[r][c]) continue;
+
+                  // Check if this cell is open and has a neighbor that can reach bottom
+                  const cell = document.querySelector(
+                    `.cell[data-row="${r}"][data-col="${c}"]`
+                  );
+                  if (cell && cell.classList.contains("open")) {
+                    const directions = [
+                      [1, 0],
+                      [-1, 0],
+                      [0, 1],
+                      [0, -1],
+                    ];
+
+                    // Check each direction
+                    for (const [dr, dc] of directions) {
+                      const nr = r + dr;
+                      const nc = c + dc;
+
+                      if (
+                        nr >= 0 &&
+                        nr < rows &&
+                        nc >= 0 &&
+                        nc < cols &&
+                        reachableFromBottom[nr][nc]
+                      ) {
+                        // This cell can reach bottom through its neighbor
+                        reachableFromBottom[r][c] = true;
+                        changed = true;
+                        break;
+                      }
+                    }
+                  }
+                }
+              }
+            }
+
+            // Step 3: Find all top row cells that can reach bottom
+            const startingPoints = [];
+            for (let c = 0; c < cols; c++) {
+              if (reachableFromTop[0][c] && reachableFromBottom[0][c]) {
+                startingPoints.push([0, c]);
+              }
+            }
+
+            // Step 4: Highlight only cells that are part of a continuous path
+            if (startingPoints.length > 0) {
+              const inPath = Array.from({ length: rows }, () =>
+                Array(cols).fill(false)
+              );
+              const pathQueue = [...startingPoints];
+
+              // Mark starting points
+              startingPoints.forEach(([r, c]) => {
+                inPath[r][c] = true;
+              });
+
+              // BFS to find all cells in the continuous path
+              while (pathQueue.length > 0) {
+                const [r, c] = pathQueue.shift();
+
+                const directions = [
+                  [1, 0],
+                  [-1, 0],
+                  [0, 1],
+                  [0, -1],
+                ];
+
+                for (const [dr, dc] of directions) {
+                  const nr = r + dr;
+                  const nc = c + dc;
+
+                  if (
+                    nr >= 0 &&
+                    nr < rows &&
+                    nc >= 0 &&
+                    nc < cols &&
+                    !inPath[nr][nc] &&
+                    reachableFromTop[nr][nc] &&
+                    reachableFromBottom[nr][nc]
+                  ) {
+                    const neighbor = document.querySelector(
+                      `.cell[data-row="${nr}"][data-col="${nc}"]`
+                    );
+                    if (neighbor && neighbor.classList.contains("open")) {
+                      inPath[nr][nc] = true;
+                      pathQueue.push([nr, nc]);
+                    }
+                  }
+                }
+              }
+
+              // Highlight the cells that are part of the path
+              for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                  if (inPath[r][c]) {
+                    const cell = document.querySelector(
+                      `.cell[data-row="${r}"][data-col="${c}"]`
+                    );
+                    if (cell) cell.classList.add("percolating");
+                  }
+                }
+              }
+            }
+          }
+
+          // Update status display
+          updateStatus(percolates);
+        };
+
+        const updateStatus = (percolates) => {
+          if (percolates) {
+            statusElement.textContent = "Percolation Detected";
+            statusElement.classList.add("percolating-status");
+          } else {
+            statusElement.textContent = "No Percolation Detected";
+            statusElement.classList.remove("percolating-status");
+          }
+        };
+
+        const randomize = () => {
+          const probability = 0.6; // 60% chance of being open
+          document.querySelectorAll(".cell").forEach((cell) => {
+            if (Math.random() < probability) {
+              cell.classList.add("open");
+            } else {
+              cell.classList.remove("open", "percolating");
+            }
+          });
+          highlightPercolation();
+        };
+
+        document.getElementById("resetBtn").addEventListener("click", () => {
+          createGrid();
+        });
+
+        document
+          .getElementById("randomizeBtn")
+          .addEventListener("click", () => {
+            randomize();
+          });
+
+        sizeSlider.addEventListener("input", (e) => {
+          rows = parseInt(e.target.value);
+          cols = rows;
+          sizeValue.textContent = rows;
+          sizeValue2.textContent = rows;
+          createGrid();
+        });
+
+        createGrid();
+      });
+    </script>
+  </body>
+</html>

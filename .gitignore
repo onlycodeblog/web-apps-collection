@@ -1,0 +1,197 @@
+# Ignore all build directories
+**/build/
+
+# Or specifically ignore nativetemplates/build directory
+nativetemplates/build/
+
+
+app/app.iml
+*.iml
+.gradle
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+.idea/
+app/app.iml
+
+
+
+# Android Studio specific files
+.idea/
+.gradle/
+local.properties
+
+# Gradle specific files
+/build
+/app/build
+**/build/
+/build/
+
+# Others
+.DS_Store
+*.iml
+*.hprof
+
+# Kotlin/Java files
+*.iml
+*.class
+*.log
+*.jar
+*.war
+*.ear
+*.db
+*.sqlite
+*.apk
+*.ap_
+*.dex
+*.class
+*.so
+*.keystore
+*.jks
+*.properties
+*.orig
+*.bak
+*.swp
+*.swo
+.DS_Store
+.vscode/
+
+# Gradle specific files
+.gradle/
+build/
+**/build/
+!gradle-wrapper.jar
+# Ignore Gradle cache
+.gradle/
+**/out/
+# Ignore Gradle log files
+gradle-app.setting
+gradle-wrapper.properties
+!gradlew
+!gradlew.bat
+# Ignore Gradle Wrapper
+gradle/wrapper/gradle-wrapper.properties
+
+# Android Studio specific files
+.idea/
+.idea/caches/
+.idea/libraries/
+.idea/modules.xml
+.idea/workspace.xml
+.idea/navEditor.xml
+.idea/assetWizardSettings.xml
+.idea/codeStyles/Project.xml
+*.ipr
+*.iws
+*.idb
+*.idea/misc.xml
+*.idea/modules.xml
+*.idea/dictionaries/
+*.idea/vcs.xml
+.idea/assetWizardSettings.xml
+.idea/dictionaries/
+.idea/jsLibraryMappings.xml
+.idea/workspace.xml
+.idea/navigation.xml
+.idea/gradle.xml
+.idea/.name
+*.iml
+*.hprof
+*.orig
+
+# MacOS specific files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Directories potentially created by some text editors
+._*
+
+# Files that might appear on removable media (like USB drives)
+.Spotlight-V100
+.Trashes
+
+# Xcode
+*.xcodeproj
+*.xcworkspace
+xcuserdata/
+
+# Android specific files
+*.apk
+*.ap_
+.cxx/
+.idea/caches/
+.idea/libraries/
+.idea/misc.xml
+.idea/modules.xml
+.idea/workspace.xml
+.idea/navEditor.xml
+.idea/assetWizardSettings.xml
+.gradle/
+local.properties
+# Uncomment if you have cxx directory in your project root
+# cxx/
+
+# Other ignored files
+*~
+.idea/
+build/
+caches/
+captures/
+externalNativeBuild/
+gradle/
+gradle-app.setting
+gradle-wrapper.jar
+gradle/wrapper/
+local.properties
+intermediates/
+kotlin/
+output.json
+signing/
+tmp/
+
+# Ignore Android asset compression settings file
+compress.txt
+
+# Uncomment if you have /generated/ directory in your project root
+# /generated/
+
+# Ignore lint-generated baseline file
+lint-baseline.xml
+
+# Flutter (if you're using Flutter)
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.flutter_settings
+pubspec.lock
+
+
+
+# Ignore all build artifacts
+**/build/
+**/intermediates/
+**/outputs/
+**/generated/
+
+# Ignore release and debug APKs/AABs
+*.apk
+*.aab
+
+# Ignore Gradle profile metadata and baseline profiles
+**/release/baselineProfiles/
+**/release/output-metadata.json
+
+# Ignore signing configs and local.properties if applicable
+local.properties
+*.keystore
+

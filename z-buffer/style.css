@@ -1,0 +1,146 @@
+body {
+    font-family: Montserrat, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    color: white;
+    position: relative;
+    margin: 0px;
+    background: linear-gradient(to right, #de6262, #ffb88c) !important;
+}
+
+canvas {
+    border: 2px solid grey;
+    border-radius: 8px;
+    background-color: white;
+}
+
+#info {
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
+
+#menu {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+#menu button {
+    margin: 0 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #000000;
+    color: white;
+    border: none;
+    border-radius: 4px;
+}
+
+#menu button:hover {
+    background-color: #555;
+}
+
+#depthControl {
+    display: flex;
+    border: 1px solid black; /* Box around depth controls */
+    border-radius: 4px;
+    margin-right: 20px;
+}
+
+#depthLabel {
+    color: black;
+    font-size: 18px;
+    margin: 0 8px;
+    padding: 10px;
+}
+
+#menu .depthButton {
+    background-color: #444;
+    color: white;
+    font-size: 18px;
+    border: none;
+    border-radius: 0px;
+    margin: 0px;
+    cursor: pointer;
+}
+
+/* Responsive styles for smaller screens and landscape orientation */
+@media (max-width: 768px) {
+    body {
+        margin: 20px; /* Reduce margin for smaller screens */
+        flex-direction: column;
+        height: 600px;
+    }
+
+    canvas {
+        width: 100%; /* Scale the canvas to fit screen width */
+        max-width: 90vw; /* Ensure it doesn’t overflow */
+        height: auto; /* Maintain aspect ratio */
+    }
+
+    #info {
+        margin-top: 20px;
+        margin-bottom: 10px;
+        padding: 15px; /* Reduce padding */
+    }
+
+    #menu {
+        flex-wrap: wrap; /* Allow buttons to wrap */
+        margin-top: 10px;
+    }
+
+    #menu button {
+        margin: 5px; /* Reduce button margin */
+        padding: 8px 15px; /* Reduce padding */
+        font-size: 14px; /* Decrease font size */
+    }
+
+    #depthControl {
+        margin: 5px; /* Reduce button margin */
+        font-size: 14px; /* Decrease font size */
+        width: fit-content;
+    }
+
+    #depthLabel {
+        font-size: 16px; /* Adjust depth label size for smaller screens */
+        margin: 0 5px;
+    }
+}
+
+/* Additional adjustments for very small devices like smartphones */
+@media (max-width: 480px) {
+    body {
+        margin: 10px; /* Further reduce margin */
+        height: 500px;
+    }
+
+    #info {
+        font-size: 14px; /* Reduce font size for readability */
+        padding: 10px;
+    }
+
+    #menu {
+        display: block;
+    }
+
+    #menu button {
+        font-size: 12px; /* Smaller buttons for small screens */
+        padding: 6px 12px;
+    }
+
+    #depthControl {
+        padding: 0px; /* Reduce padding for smaller screens */
+        width: fit-content;
+    }
+
+    #depthLabel {
+        font-size: 14px; /* Further adjust depth label size */
+    }    
+}

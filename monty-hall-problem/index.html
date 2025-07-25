@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monty Hall Problem Simulation</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <img src="doors.jpg" alt="Monty Hall Problem Infographic" class="infographic">
+
+        <div class="inputs">
+            <input type="number" id="numSimulations" placeholder="Enter number of simulations" min="1" pattern="\d+" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+            <button id="runButton" onclick="toggleSimulation()" class="btn" data-color="#2f5398" aria-label="Run Simulations">Run</button>
+            <button onclick="resetSimulation()" class="reload-btn" data-color="#2f5398" aria-label="Restart Simulation">&#x21bb;</button>
+        </div>
+            
+        <div id="results">
+            <div class="progress-container">    
+                <div class="progress-bar">
+                    <div id="progressStay" class="progress">
+                        <span id="stayWinsText" class="progress-text">Wins by Staying: 0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="progress-container"> 
+                <div class="progress-bar">
+                    <div id="progressSwitch" class="progress">
+                        <span id="switchWinsText" class="progress-text">Wins by Switching: 0</span>
+                    </div>
+                </div>
+            </div>    
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

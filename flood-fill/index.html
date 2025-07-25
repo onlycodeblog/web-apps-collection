@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Flood Fill Algorithm Visualizer</title>
+    <style>
+      :root {
+        --primary: #274690;
+        --primary-dark: #2563eb;
+        --background: #0f172a;
+        --text: #e2e8f0;
+        --border: #334155;
+        --grid-bg: #1e293b;
+        --cell-border: #334155;
+        --filled-cell: #60a5fa;
+        --hover-cell: #274690;
+        --button-hover: #274690;
+        --shadow: rgba(0, 0, 0, 0.3);
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+        background-color: var(--background);
+        background-image: radial-gradient(
+            circle at 25% 25%,
+            rgba(59, 130, 246, 0.05) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 75% 75%,
+            rgba(59, 130, 246, 0.05) 0%,
+            transparent 50%
+          );
+        color: var(--text);
+        margin: 0;
+        padding: 5px;
+        line-height: 1.5;
+        transition: all 0.2s ease;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 90vh;
+      }
+
+      .container {
+        max-width: 800px;
+        width: 100%;
+        margin: 0 auto;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      h1 {
+        font-weight: 700;
+        margin-bottom: 8px;
+        font-size: 1.75rem;
+        background: white;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .description {
+        color: #94a3b8;
+        margin-bottom: 24px;
+        font-size: 0.95rem;
+      }
+
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 25px;
+        justify-content: center;
+      }
+
+      .controls > button,
+      .controls > .color-picker {
+        margin-bottom: 15px;
+      }
+
+      button {
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 10px 18px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        box-shadow: none;
+      }
+
+      button:hover {
+        background-color: var(--button-hover);
+        transform: translateY(-1px);
+        box-shadow: none;
+      }
+
+      button:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 3px rgba(37, 99, 235, 0.3);
+      }
+
+      button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      button#reset,
+      button#randomize {
+        width: 150px;
+        justify-content: center;
+      }
+
+      select,
+      input {
+        padding: 10px 14px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        font-size: 0.9rem;
+        background-color: #1e293b;
+        color: var(--text);
+        appearance: none;
+        -webkit-appearance: none;
+        background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23e2e8f0%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-size: 12px;
+        padding-right: 28px;
+        cursor: pointer;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      input[type="range"] {
+        -webkit-appearance: none;
+        appearance: none;
+        height: 6px;
+        background: #475569;
+        border-radius: 3px;
+        box-shadow: none;
+        padding: 0;
+      }
+
+      input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--primary);
+        cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: none;
+      }
+
+      input[type="range"]::-moz-range-thumb {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--primary);
+        cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: none;
+      }
+
+      input[type="range"]::-webkit-slider-thumb:hover {
+        background: var(--primary-dark);
+      }
+
+      input[type="range"]::-moz-range-thumb:hover {
+        background: var(--primary-dark);
+      }
+
+      .color-picker {
+        width: 180px;
+        justify-content: space-between;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: rgba(30, 41, 59, 0.7);
+        padding: 8px 15px;
+        border-radius: 8px;
+        border: 1px solid rgba(59, 130, 246, 0.1);
+      }
+
+      .color-circle {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        border: 2px solid var(--border);
+        cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+      }
+
+      .color-circle:hover {
+        transform: scale(1.2);
+        box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
+      }
+
+      .grid-container {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 24px;
+        overflow: auto;
+        max-width: 100%;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px var(--shadow);
+        background-color: var(--grid-bg);
+        padding: 20px;
+        border: 1px solid rgba(59, 130, 246, 0.2);
+      }
+
+      .grid {
+        display: grid;
+        grid-gap: 1px;
+        background-color: var(--cell-border);
+        border: 1px solid var(--cell-border);
+        border-radius: 4px;
+        box-shadow: 0 0 30px rgba(59, 130, 246, 0.1);
+        overflow: hidden;
+      }
+
+      .cell {
+        width: 20px;
+        height: 20px;
+        background-color: #0f172a;
+        transition: all 0.25s ease;
+        cursor: pointer;
+        position: relative;
+      }
+
+      .cell:hover {
+        background-color: var(--hover-cell);
+        transform: scale(1.05);
+        z-index: 2;
+        box-shadow: none;
+      }
+
+      .legend {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+        gap: 24px;
+        flex-wrap: wrap;
+        background: rgba(30, 41, 59, 0.7);
+        padding: 12px 20px;
+        border-radius: 8px;
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        border: 1px solid rgba(59, 130, 246, 0.1);
+      }
+
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.85rem;
+      }
+
+      .legend-color {
+        width: 16px;
+        height: 16px;
+        border-radius: 4px;
+        border: 1px solid var(--cell-border);
+        box-shadow: 0 0 4px rgba(59, 130, 246, 0.2);
+      }
+
+      .stats {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 0.9rem;
+        background: rgba(30, 41, 59, 0.7);
+        padding: 10px 20px;
+        border-radius: 8px;
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        border: 1px solid rgba(59, 130, 246, 0.1);
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+      }
+
+      .progress-container {
+        width: 100%;
+        height: 6px;
+        background-color: #1e293b;
+        border-radius: 3px;
+        margin-top: 16px;
+        overflow: hidden;
+        display: none;
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+      }
+
+      .progress-bar {
+        height: 100%;
+        background: linear-gradient(to right, #60a5fa, #3b82f6);
+        width: 0%;
+        transition: width 0.1s;
+        box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
+      }
+
+      .grid-size-slider,
+      .speed-control {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: rgba(30, 41, 59, 0.7);
+        padding: 8px 15px;
+        border-radius: 8px;
+        border: 1px solid rgba(59, 130, 246, 0.1);
+      }
+
+      /* Fix conflicts with previous #grid-size width */
+      #grid-size,
+      .speed-control input[type="range"] {
+        width: 100%; /* Override the 150px width */
+      }
+
+      .grid-size-label {
+        font-size: 0.85rem;
+        color: var(--text);
+        font-weight: 500;
+      }
+
+      #grid-size-value {
+        color: #60a5fa;
+        font-weight: 600;
+      }
+
+      #grid-size {
+        width: 150px;
+        -webkit-appearance: none;
+        appearance: none;
+        height: 6px;
+        background: rgba(30, 41, 59, 0.8);
+        border-radius: 3px;
+        border: 1px solid var(--border);
+      }
+
+      #grid-size::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--primary);
+        cursor: pointer;
+        box-shadow: none;
+        transition: all 0.2s;
+      }
+
+      #grid-size::-moz-range-thumb {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--primary);
+        cursor: pointer;
+        box-shadow: none;
+        transition: all 0.2s;
+      }
+
+      #grid-size::-webkit-slider-thumb:hover,
+      #grid-size::-webkit-slider-thumb:active {
+        transform: scale(1.2);
+        background: var(--primary-dark);
+      }
+
+      #grid-size::-moz-range-thumb:hover,
+      #grid-size::-moz-range-thumb:active {
+        transform: scale(1.2);
+        background: var(--primary-dark);
+      }
+
+      .algorithm-toggle {
+        display: flex;
+        align-items: center;
+        background: rgba(30, 41, 59, 0.7);
+        padding: 4px;
+        border-radius: 6px;
+        border: 1px solid rgba(59, 130, 246, 0.1);
+        position: relative;
+      }
+
+      .algorithm-label {
+        display: none; /* Hide external labels */
+      }
+
+      .switch {
+        position: relative;
+        display: inline-block;
+        width: 120px;
+        height: 30px;
+      }
+
+      .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .toggle-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: transparent;
+        transition: 0.3s;
+        border-radius: 4px;
+      }
+
+      .toggle-slider:before {
+        position: absolute;
+        content: "";
+        height: 100%;
+        width: 50%;
+        left: 0;
+        background-color: var(--primary);
+        transition: 0.3s;
+        border-radius: 4px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      }
+
+      input:checked + .toggle-slider:before {
+        transform: translateX(100%);
+      }
+
+      .toggle-slider:after {
+        content: "BFS";
+        position: absolute;
+        left: 0;
+        width: 50%;
+        text-align: center;
+        line-height: 30px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: white;
+        z-index: 1;
+      }
+
+      .toggle-slider:before {
+        content: "";
+      }
+
+      .toggle-slider span {
+        content: "DFS";
+        position: absolute;
+        right: 0;
+        width: 50%;
+        text-align: center;
+        line-height: 30px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #94a3b8; /* Lighter color for inactive option */
+        z-index: 2;
+      }
+
+      /* Text color states */
+      input:not(:checked) + .toggle-slider:after {
+        color: white; /* BFS: active (white) */
+      }
+
+      input:not(:checked) + .toggle-slider span {
+        color: #94a3b8; /* DFS: inactive (gray) */
+      }
+
+      input:checked + .toggle-slider:after {
+        color: #94a3b8; /* BFS: inactive (gray) */
+      }
+
+      input:checked + .toggle-slider span {
+        color: white; /* DFS: active (white) */
+      }
+
+      /* For mobile responsiveness */
+      @media (max-width: 768px) {
+        .controls {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .controls > button,
+        .controls > .color-picker,
+        .controls > .grid-size-slider,
+        .controls > .speed-control {
+          width: 100%;
+          max-width: 100%;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .cell {
+          width: 15px;
+          height: 15px;
+        }
+
+        h1 {
+          font-size: 1.5rem;
+        }
+      }
+
+      @media (max-width: 400px) {
+        .cell {
+          width: 10px;
+          height: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Flood Fill Algorithm Visualizer</h1>
+        <div class="description">
+          Click on any cell in the grid to start the flood fill algorithm. Right
+          click to toggle obstacle.
+        </div>
+      </header>
+
+      <div class="controls">
+        <button id="reset">Reset Grid</button>
+        <button id="randomize">Randomize</button>
+
+        <div class="color-picker">
+          <div
+            class="color-circle"
+            style="background-color: #d52941"
+            data-color="#d52941"
+          ></div>
+          <div
+            class="color-circle"
+            style="background-color: #4caf50"
+            data-color="#4caf50"
+          ></div>
+          <div
+            class="color-circle"
+            style="background-color: #72ddf7"
+            data-color="#72ddf7"
+          ></div>
+          <div
+            class="color-circle"
+            style="background-color: #fcd581"
+            data-color="#fcd581"
+          ></div>
+        </div>
+
+        <div class="grid-size-slider">
+          <span class="grid-size-label"
+            >Grid Size: <span id="grid-size-value">15×15</span></span
+          >
+          <input
+            type="range"
+            id="grid-size"
+            min="5"
+            max="40"
+            step="5"
+            value="15"
+          />
+        </div>
+
+        <div class="speed-control">
+          <span>Speed:</span>
+          <input type="range" id="speed" min="1" max="100" value="50" />
+        </div>
+      </div>
+
+      <div class="legend">
+        <div class="legend-item">
+          <div class="legend-color" style="background-color: #0f172a"></div>
+          <span>Empty</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="background-color: #d52941"></div>
+          <span>Filled</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="background-color: #475569"></div>
+          <span>Obstacle</span>
+        </div>
+        <div class="algorithm-toggle">
+          <span class="algorithm-label">BFS</span>
+          <label class="switch">
+            <input type="checkbox" id="algorithm-toggle" />
+            <span class="toggle-slider">
+              <span>DFS</span>
+            </span>
+          </label>
+          <span class="algorithm-label">DFS</span>
+        </div>
+      </div>
+
+      <div class="grid-container">
+        <div class="grid" id="grid"></div>
+      </div>
+
+      <div class="stats" id="stats"></div>
+      <div class="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+      </div>
+    </div>
+
+    <script>
+      const grid = document.getElementById("grid");
+      const resetButton = document.getElementById("reset");
+      const randomizeButton = document.getElementById("randomize");
+      const gridSizeSelect = document.getElementById("grid-size");
+      const speedSlider = document.getElementById("speed");
+      const statsEl = document.getElementById("stats");
+      const progressBar = document.getElementById("progress-bar");
+      const progressContainer = document.querySelector(".progress-container");
+      const colorCircles = document.querySelectorAll(".color-circle");
+      const gridSizeSlider = document.getElementById("grid-size");
+      const gridSizeValue = document.getElementById("grid-size-value");
+      const algorithmToggle = document.getElementById("algorithm-toggle");
+
+      let cells = [];
+      let fillColor = "#d52941";
+      let isRunning = false;
+      let cellsVisited = 0;
+      let totalCellsToFill = 0;
+      let animationDelay = 101 - parseInt(speedSlider.value);
+      let gridSize = 15;
+      let useDFS = false;
+
+      // Create the initial grid
+      createGrid();
+
+      // Event listeners
+      resetButton.addEventListener("click", resetGrid);
+      randomizeButton.addEventListener("click", randomizeGrid);
+      gridSizeSlider.addEventListener("input", () => {
+        const size = parseInt(gridSizeSlider.value);
+        gridSizeValue.textContent = `${size}×${size}`;
+        gridSize = size;
+        createGrid();
+      });
+      speedSlider.addEventListener("input", () => {
+        animationDelay = 101 - parseInt(speedSlider.value);
+      });
+      colorCircles.forEach((circle) => {
+        circle.addEventListener("click", () => {
+          fillColor = circle.dataset.color;
+          colorCircles.forEach(
+            (c) => (c.style.border = "1px solid var(--border)")
+          );
+          circle.style.border = "2px solid var(--primary-dark)";
+
+          // Update the legend as well
+          document
+            .querySelectorAll(".legend-item")[1]
+            .querySelector(".legend-color").style.backgroundColor = fillColor;
+        });
+      });
+      algorithmToggle.addEventListener("change", function () {
+        useDFS = this.checked;
+      });
+
+      // Select the first color by default
+      colorCircles[0].style.border = "2px solid var(--primary-dark)";
+
+      // Create the grid
+      function createGrid() {
+        grid.innerHTML = "";
+        grid.style.gridTemplateColumns = `repeat(${gridSize}, 1fr)`;
+        cells = [];
+
+        for (let i = 0; i < gridSize; i++) {
+          const row = [];
+          for (let j = 0; j < gridSize; j++) {
+            const cell = document.createElement("div");
+            cell.classList.add("cell");
+            cell.dataset.row = i;
+            cell.dataset.col = j;
+
+            cell.addEventListener("click", () => {
+              if (!isRunning) {
+                const row = parseInt(cell.dataset.row);
+                const col = parseInt(cell.dataset.col);
+
+                if (cell.style.backgroundColor === "rgb(209, 213, 219)") {
+                  // Don't start flood fill on obstacles
+                  return;
+                }
+
+                startFloodFill(row, col);
+              }
+            });
+
+            // Right click to toggle obstacle
+            cell.addEventListener("contextmenu", (e) => {
+              e.preventDefault();
+              if (!isRunning) {
+                if (cell.style.backgroundColor === "rgb(209, 213, 219)") {
+                  cell.style.backgroundColor = "";
+                } else {
+                  cell.style.backgroundColor = "#d1d5db";
+                }
+              }
+            });
+
+            grid.appendChild(cell);
+            row.push(cell);
+          }
+          cells.push(row);
+        }
+
+        updateStats();
+      }
+
+      // Reset the grid
+      function resetGrid() {
+        if (isRunning) return;
+
+        for (let i = 0; i < gridSize; i++) {
+          for (let j = 0; j < gridSize; j++) {
+            cells[i][j].style.backgroundColor = "";
+          }
+        }
+
+        updateStats();
+      }
+
+      // Randomize the grid with some obstacles
+      function randomizeGrid() {
+        if (isRunning) return;
+
+        resetGrid();
+
+        const obstacleChance = 0.2;
+
+        for (let i = 0; i < gridSize; i++) {
+          for (let j = 0; j < gridSize; j++) {
+            if (Math.random() < obstacleChance) {
+              cells[i][j].style.backgroundColor = "#d1d5db";
+            }
+          }
+        }
+
+        updateStats();
+      }
+
+      // Start the flood fill algorithm
+      async function startFloodFill(row, col) {
+        if (isRunning) return;
+        isRunning = true;
+        cellsVisited = 0;
+        totalCellsToFill = 0;
+
+        // Count total cells that can be filled
+        for (let i = 0; i < gridSize; i++) {
+          for (let j = 0; j < gridSize; j++) {
+            if (cells[i][j].style.backgroundColor !== "rgb(209, 213, 219)") {
+              totalCellsToFill++;
+            }
+          }
+        }
+
+        // Reset cells that are already filled (but not obstacles)
+        for (let i = 0; i < gridSize; i++) {
+          for (let j = 0; j < gridSize; j++) {
+            if (cells[i][j].style.backgroundColor !== "rgb(209, 213, 219)") {
+              cells[i][j].style.backgroundColor = "";
+            }
+          }
+        }
+
+        progressContainer.style.display = "block";
+        resetButton.disabled = true;
+        randomizeButton.disabled = true;
+        gridSizeSelect.disabled = true;
+        algorithmToggle.disabled = true;
+
+        const startTime = performance.now();
+
+        // Select algorithm based on toggle state
+        if (useDFS) {
+          await floodFillDFS(row, col);
+        } else {
+          await floodFillBFS(row, col);
+        }
+
+        const endTime = performance.now();
+        const duration = ((endTime - startTime) / 1000).toFixed(2);
+
+        statsEl.innerHTML = `Flood fill complete <br> Filled ${cellsVisited} cells in ${duration} seconds`;
+
+        isRunning = false;
+        resetButton.disabled = false;
+        randomizeButton.disabled = false;
+        gridSizeSelect.disabled = false;
+        algorithmToggle.disabled = false;
+
+        setTimeout(() => {
+          progressContainer.style.display = "none";
+          progressBar.style.width = "0%";
+        }, 1000);
+      }
+
+      // Flood fill algorithm using BFS (breadth-first search)
+      async function floodFillBFS(row, col) {
+        const queue = [{ row, col }];
+        const visited = new Set();
+        const key = `${row},${col}`;
+        visited.add(key);
+
+        // Define the 4 directions (up, right, down, left)
+        const directions = [
+          [-1, 0],
+          [0, 1],
+          [1, 0],
+          [0, -1],
+        ];
+
+        while (queue.length > 0) {
+          const { row, col } = queue.shift();
+
+          // Fill the current cell
+          cells[row][col].style.backgroundColor = fillColor;
+          cellsVisited++;
+
+          // Update progress
+          progressBar.style.width = `${
+            (cellsVisited / totalCellsToFill) * 100
+          }%`;
+
+          // Update stats
+          statsEl.textContent = `Cells filled: ${cellsVisited}`;
+
+          // Delay for visualization
+          if (animationDelay > 0) {
+            await new Promise((resolve) => setTimeout(resolve, animationDelay));
+          }
+
+          // Check all 4 adjacent cells
+          for (const [dx, dy] of directions) {
+            const newRow = row + dx;
+            const newCol = col + dy;
+
+            // Check if the new position is within the grid boundaries
+            if (
+              newRow >= 0 &&
+              newRow < gridSize &&
+              newCol >= 0 &&
+              newCol < gridSize
+            ) {
+              const newKey = `${newRow},${newCol}`;
+
+              // Check if we've already visited this cell
+              if (!visited.has(newKey)) {
+                visited.add(newKey);
+
+                // Check if cell is not an obstacle and not already filled
+                if (
+                  cells[newRow][newCol].style.backgroundColor !==
+                    "rgb(209, 213, 219)" &&
+                  cells[newRow][newCol].style.backgroundColor !== fillColor
+                ) {
+                  queue.push({ row: newRow, col: newCol });
+                }
+              }
+            }
+          }
+        }
+      }
+
+      // Flood fill algorithm using DFS (depth-first search)
+      async function floodFillDFS(row, col) {
+        const stack = [{ row, col }];
+        const visited = new Set();
+        const key = `${row},${col}`;
+        visited.add(key);
+
+        // Define the 4 directions (up, right, down, left)
+        const directions = [
+          [-1, 0],
+          [0, 1],
+          [1, 0],
+          [0, -1],
+        ];
+
+        while (stack.length > 0) {
+          const { row, col } = stack.pop();
+
+          // Fill the current cell
+          cells[row][col].style.backgroundColor = fillColor;
+          cellsVisited++;
+
+          // Update progress
+          progressBar.style.width = `${
+            (cellsVisited / totalCellsToFill) * 100
+          }%`;
+
+          // Update stats
+          statsEl.textContent = `Cells filled: ${cellsVisited}`;
+
+          // Delay for visualization
+          if (animationDelay > 0) {
+            await new Promise((resolve) => setTimeout(resolve, animationDelay));
+          }
+
+          // Check all 4 adjacent cells
+          for (const [dx, dy] of directions) {
+            const newRow = row + dx;
+            const newCol = col + dy;
+
+            // Check if the new position is within the grid boundaries
+            if (
+              newRow >= 0 &&
+              newRow < gridSize &&
+              newCol >= 0 &&
+              newCol < gridSize
+            ) {
+              const newKey = `${newRow},${newCol}`;
+
+              // Check if we've already visited this cell
+              if (!visited.has(newKey)) {
+                visited.add(newKey);
+
+                // Check if cell is not an obstacle and not already filled
+                if (
+                  cells[newRow][newCol].style.backgroundColor !==
+                    "rgb(209, 213, 219)" &&
+                  cells[newRow][newCol].style.backgroundColor !== fillColor
+                ) {
+                  stack.push({ row: newRow, col: newCol });
+                }
+              }
+            }
+          }
+        }
+      }
+
+      // Update stats
+      function updateStats() {
+        let obstacles = 0;
+        let empty = 0;
+
+        for (let i = 0; i < gridSize; i++) {
+          for (let j = 0; j < gridSize; j++) {
+            if (cells[i][j].style.backgroundColor === "rgb(209, 213, 219)") {
+              obstacles++;
+            } else {
+              empty++;
+            }
+          }
+        }
+
+        statsEl.textContent = `Grid: ${gridSize}×${gridSize} | Empty: ${empty} | Obstacles: ${obstacles}`;
+      }
+    </script>
+  </body>
+</html>
