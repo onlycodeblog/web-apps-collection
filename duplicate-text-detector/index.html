@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text File Duplicate Highlighter</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📄 Text Duplicate Highlighter</h1>
+            <p>Upload a text file or paste text to detect and highlight duplicate content</p>
+        </div>
+
+        <div class="controls">
+            <div class="input-container">
+                <div class="input-tabs">
+                    <button class="tab-button active" data-tab="file">📁 Upload File</button>
+                    <button class="tab-button" data-tab="paste">📝 Paste Text</button>
+                </div>
+                
+                <div class="tab-content active" id="file-tab">
+                    <div class="file-input-container">
+                        <div class="file-input-wrapper">
+                            <input type="file" id="fileInput" accept=".txt,.md,.csv,.log,.json,.xml,.html,.css,.js,.py,.java,.cpp,.c,.h" />
+                            <label for="fileInput" class="file-input-label">Choose Text File</label>
+                        </div>
+                        <span id="fileName">No file selected</span>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="paste-tab">
+                    <div class="paste-container">
+                        <textarea id="pasteTextarea" class="paste-textarea" placeholder="Paste your text content here...&#10;&#10;You can paste code, documentation, logs, or any text content you want to analyze for duplicates."></textarea>
+                        <div class="paste-actions">
+                            <button id="analyzeBtn" class="analyze-btn" disabled>Analyze Text</button>
+                            <button id="clearBtn" class="clear-btn">Clear</button>
+                            <span id="pasteInfo">0 characters, 0 lines</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="options">
+                <div class="option">
+                    <input type="checkbox" id="caseSensitive" />
+                    <label for="caseSensitive">Case sensitive</label>
+                </div>
+                <div class="option">
+                    <input type="checkbox" id="ignoreWhitespace" />
+                    <label for="ignoreWhitespace">Ignore whitespaces</label>
+                </div>
+                <div class="option">
+                    <input type="checkbox" id="ignorePunctuation" />
+                    <label for="ignorePunctuation">Ignore punctuation</label>
+                </div>
+                <div class="option">
+                    <input type="checkbox" id="matchCompleteLine" checked/>
+                    <label for="ignorePunctuation">Match complete line</label>
+                </div>
+                <div class="slider-option">
+                    <label for="minLength">Min length:</label>
+                    <input type="range" id="minLength" class="slider" min="3" max="50" value="10" />
+                    <span id="minLengthValue">10</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats" id="stats">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number" id="totalLines">0</div>
+                    <div class="stat-label">Total Lines</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="duplicateGroups">0</div>
+                    <div class="stat-label">Duplicate Groups</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="duplicateLines">0</div>
+                    <div class="stat-label">Duplicate Lines</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="duplicatePercentage">0%</div>
+                    <div class="stat-label">Duplicate Percentage</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="file-content" id="fileContent">
+            <div class="no-file">
+                <p>📁 Please select a text file to begin analysis</p>
+            </div>
+        </div>
+        <div class="legend" id="legend" style="display: none;">
+            <h3>Duplicate Groups</h3>
+            <div class="legend-grid" id="legendGrid"></div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
