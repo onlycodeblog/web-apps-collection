@@ -1,87 +1,31 @@
-# Ignore all build directories
-**/build/
-
-# Or specifically ignore nativetemplates/build directory
-nativetemplates/build/
-
-
-app/app.iml
-*.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
-.idea/
-app/app.iml
-
-
-
-# Android Studio specific files
-.idea/
-.gradle/
-local.properties
-
-# Gradle specific files
-/build
-/app/build
-**/build/
-/build/
-
-# Others
-.DS_Store
-*.iml
-*.hprof
-
-# Kotlin/Java files
-*.iml
+# -------------------------------
+# Android / Android Studio
+# -------------------------------
+*.apk
+*.ap_
+*.aab
+*.dex
 *.class
-*.log
 *.jar
 *.war
 *.ear
-*.db
-*.sqlite
-*.apk
-*.ap_
-*.dex
-*.class
-*.so
+*.iml
+*.hprof
 *.keystore
 *.jks
+*.so
 *.properties
 *.orig
 *.bak
 *.swp
 *.swo
-.DS_Store
-.vscode/
+*.db
+*.sqlite
+output.json
+compress.txt
+lint-baseline.xml
 
-# Gradle specific files
-.gradle/
-build/
-**/build/
-!gradle-wrapper.jar
-# Ignore Gradle cache
-.gradle/
-**/out/
-# Ignore Gradle log files
-gradle-app.setting
-gradle-wrapper.properties
-!gradlew
-!gradlew.bat
-# Ignore Gradle Wrapper
-gradle/wrapper/gradle-wrapper.properties
-
-# Android Studio specific files
+# Android Studio specific
 .idea/
 .idea/caches/
 .idea/libraries/
@@ -89,109 +33,153 @@ gradle/wrapper/gradle-wrapper.properties
 .idea/workspace.xml
 .idea/navEditor.xml
 .idea/assetWizardSettings.xml
-.idea/codeStyles/Project.xml
-*.ipr
-*.iws
-*.idb
-*.idea/misc.xml
-*.idea/modules.xml
-*.idea/dictionaries/
-*.idea/vcs.xml
-.idea/assetWizardSettings.xml
+.idea/codeStyles/
 .idea/dictionaries/
 .idea/jsLibraryMappings.xml
-.idea/workspace.xml
 .idea/navigation.xml
 .idea/gradle.xml
 .idea/.name
-*.iml
-*.hprof
-*.orig
+.idea/vcs.xml
+*.ipr
+*.iws
 
-# MacOS specific files
-.DS_Store
-.AppleDouble
-.LSOverride
-
-# Directories potentially created by some text editors
-._*
-
-# Files that might appear on removable media (like USB drives)
-.Spotlight-V100
-.Trashes
-
-# Xcode
-*.xcodeproj
-*.xcworkspace
-xcuserdata/
-
-# Android specific files
-*.apk
-*.ap_
-.cxx/
-.idea/caches/
-.idea/libraries/
-.idea/misc.xml
-.idea/modules.xml
-.idea/workspace.xml
-.idea/navEditor.xml
-.idea/assetWizardSettings.xml
+# Gradle
 .gradle/
-local.properties
-# Uncomment if you have cxx directory in your project root
-# cxx/
-
-# Other ignored files
-*~
-.idea/
 build/
-caches/
-captures/
-externalNativeBuild/
-gradle/
-gradle-app.setting
-gradle-wrapper.jar
-gradle/wrapper/
-local.properties
-intermediates/
-kotlin/
-output.json
-signing/
-tmp/
-
-# Ignore Android asset compression settings file
-compress.txt
-
-# Uncomment if you have /generated/ directory in your project root
-# /generated/
-
-# Ignore lint-generated baseline file
-lint-baseline.xml
-
-# Flutter (if you're using Flutter)
-.flutter-plugins
-.flutter-plugins-dependencies
-.packages
-.flutter_settings
-pubspec.lock
-
-
-
-# Ignore all build artifacts
 **/build/
 **/intermediates/
 **/outputs/
 **/generated/
-
-# Ignore release and debug APKs/AABs
-*.apk
-*.aab
-
-# Ignore Gradle profile metadata and baseline profiles
 **/release/baselineProfiles/
 **/release/output-metadata.json
+gradle/
+gradle-app.setting
+gradle-wrapper.jar
+gradle/wrapper/
+gradle-wrapper.properties
+!gradlew
+!gradlew.bat
 
-# Ignore signing configs and local.properties if applicable
+# Native builds
+.externalNativeBuild/
+.cxx/
+**/out/
+
+# App-specific
+app/app.iml
+captures/
+nativetemplates/build/
 local.properties
-*.keystore
+signing/
+intermediates/
+kotlin/
+
+# -------------------------------
+# Python
+# -------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.pyo
+*.pyd
+*.dll
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+pip-log.txt
+pip-delete-this-directory.txt
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+*.hypothesis/
+.pytest_cache/
+.pyre/
+.pytype/
+.dmypy.json
+dmypy.json
+.pyre/
+pdm.lock
+poetry.lock
+Pipfile.lock
+.python-version
+.hatch/
+.ipynb_checkpoints
+*.ipynb_convert
+cython_debug/
+
+# -------------------------------
+# macOS
+# -------------------------------
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.Spotlight-V100
+.Trashes
+.fseventsd
+.TemporaryItems
+.apdisk
+
+# -------------------------------
+# Editors / IDEs
+# -------------------------------
+.vscode/
+.history/
+*.sublime-project
+*.sublime-workspace
+# Vim
+*.swp
+*.swo
+*~
+# Emacs
+\#*\#
+.\#*
+*~
+
+# -------------------------------
+# Logs / Data / Misc
+# -------------------------------
+*.log
+logs/
+*.out
+*.err
+tmp/
+temp/
+config.yaml
+config.local.yaml
+
+# -------------------------------
+# Project-specific (custom rules)
+# -------------------------------
+# Add any additional ignore rules below this line
 
