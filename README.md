@@ -42,7 +42,7 @@ All apps are hosted via GitHub Pages and can be accessed directly.
 | **Pixelated Art** | Transform image/text into pixelated images | [View](https://onlycodeblog.github.io/web-apps-collection/pixelated-art/) |
 | **Regex Pattern Tester** | Test regular expressions | [View](https://onlycodeblog.github.io/web-apps-collection/regex-tester/) |
 | **Sudoku Solver** | Automated sudoku puzzle solver | [View](https://onlycodeblog.github.io/web-apps-collection/sudoku-solver/) |
-| **Sorting Algorithms Visualizer** | Compare sorting algorithms visually | 
+| **Visualize Sorting Algorithms** | Compare sorting algorithms visually | 
 |                                   | Bubble Sort | [View](https://onlycodeblog.github.io/web-apps-collection/visual-sorting-algorithms/bubble-sort/) |
 |                                   | Insertion Sort | [View](https://onlycodeblog.github.io/web-apps-collection/visual-sorting-algorithms/insertion-sort/) |
 |                                   | Selection Sort | [View](https://onlycodeblog.github.io/web-apps-collection/visual-sorting-algorithms/selection-sort/) |
