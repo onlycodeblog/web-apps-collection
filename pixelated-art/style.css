@@ -301,8 +301,4 @@ input[type="color"]::-webkit-color-swatch {
   .main-container {
     padding: 1rem;
   }
-
-  .controls-section {
-    min-width: auto;
-  }
 }
